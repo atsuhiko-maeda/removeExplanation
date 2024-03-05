@@ -22,7 +22,8 @@
         var content = JSON.parse(e.target.result);
         var cells = content.cells;
         var filteredCells = cells.filter(function(cell) {
-          return cell.cell_type !== "markdown";
+          return cell.cell_type === "code" || cell.source[0].includes("### 演習")          
+          // return cell.cell_type !== "markdown";
         });
         content.cells = filteredCells;
         var outputFileName = file.name.replace('.ipynb', '_no_markdown.ipynb');
