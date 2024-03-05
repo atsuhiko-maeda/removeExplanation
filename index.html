@@ -15,20 +15,21 @@
   <script>
     function handleFileDrop(event) {
       event.preventDefault();
-      var file = event.dataTransfer.files[0];
-      var reader = new FileReader();
+      let file = event.dataTransfer.files[0];
+      let reader = new FileReader();
 
       reader.onload = function(e) {
-        var content = JSON.parse(e.target.result);
-        var cells = content.cells;
-        var filteredCells = cells.filter(function(cell) {
-          return cell.cell_type === "code" || cell.source[0].includes("### 演習")          
+        let content = JSON.parse(e.target.result);
+        let cells = content.cells;
+        let filteredCells = cells.filter(function(cell) {
+          console.log(typeof(cell.source[0]));
+          return cell.cell_type === "code" || (typeof cell.source[0] ==="string" && cell.source[0].includes("### 演習") );          
           // return cell.cell_type !== "markdown";
         });
         content.cells = filteredCells;
-        var outputFileName = file.name.replace('.ipynb', '_no_markdown.ipynb');
-        var blob = new Blob([JSON.stringify(content)], { type: 'application/json' });
-        var link = document.createElement('a');
+        let outputFileName = file.name.replace('.ipynb', '_no_markdown.ipynb');
+        let blob = new Blob([JSON.stringify(content)], { type: 'application/json' });
+        let link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
         link.download = outputFileName;
         link.click();
