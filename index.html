@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ipynb Markdownセル削除ツール</title>
+</head>
+<body>
+  <h2>ipynb Markdownセル削除ツール</h2>
+  <p>ipynbファイルをドラッグしてください。</p>
+  <div id="drop_zone" style="width: 300px; height: 200px; border: 2px dashed #ccc;">
+    ドラッグ＆ドロップエリア
+  </div>
+  <progress id="progress_bar" value="0" max="100" style="display: none;"></progress>
+  <p id="status"></p>
+
+  <script>
+    function handleFileDrop(event) {
+      event.preventDefault();
+      var file = event.dataTransfer.files[0];
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        var content = JSON.parse(e.target.result);
+        var cells = content.cells;
+        var filteredCells = cells.filter(function(cell) {
+          return cell.cell_type !== "markdown";
+        });
+        content.cells = filteredCells;
+        var outputFileName = file.name.replace('.ipynb', '_no_markdown.ipynb');
+        var blob = new Blob([JSON.stringify(content)], { type: 'application/json' });
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = outputFileName;
+        link.click();
+        document.getElementById('status').innerText = 'ファイルが変換されました。';
+        document.getElementById('progress_bar').style.display = 'none';
+      };
+
+      reader.readAsText(file);
+    }
+
+    function handleDragOver(event) {
+      event.preventDefault();
+    }
+
+    function handleDragEnter(event) {
+      event.preventDefault();
+      document.getElementById('drop_zone').style.border = '2px solid #999';
+    }
+
+    function handleDragLeave(event) {
+      event.preventDefault();
+      document.getElementById('drop_zone').style.border = '2px dashed #ccc';
+    }
+
+    document.getElementById('drop_zone').addEventListener('dragover', handleDragOver, false);
+    document.getElementById('drop_zone').addEventListener('dragenter', handleDragEnter, false);
+    document.getElementById('drop_zone').addEventListener('dragleave', handleDragLeave, false);
+    document.getElementById('drop_zone').addEventListener('drop', handleFileDrop, false);
+  </script>
+</body>
+</html>
