@@ -22,9 +22,9 @@
         let content = JSON.parse(e.target.result);
         let cells = content.cells;
         let filteredCells = cells.filter(function(cell) {
-          console.log(typeof(cell.source[0]));
-          return cell.cell_type === "code" || (typeof cell.source[0] ==="string" && cell.source[0].includes("### 演習") );          
-          // return cell.cell_type !== "markdown";
+          // console.log(typeof(cell.source[0]));
+          return cell.cell_type === "code" || 
+                  (Array.isArray(cell.source) && typeof cell.source[0] ==="string" && cell.source[0].includes("### 演習") );          
         });
         content.cells = filteredCells;
         let outputFileName = file.name.replace('.ipynb', '_no_markdown.ipynb');
